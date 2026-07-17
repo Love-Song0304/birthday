@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>🎂 生日快乐 🎂</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #ffd700;
+    --pink: #ff69b4;
+    --cyan: #00e5ff;
+    --purple: #b388ff;
+  }
+
+  body {
+    overflow: hidden;
+    background: #0a0012;
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    touch-action: manipulation;
+    cursor: crosshair;
+  }
+
+  canvas { display: block; position: fixed; top: 0; left: 0; z-index: 1; }
+
+  /* CSS 粒子层 */
+  .css-particles {
+    position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden;
+  }
+  .css-particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(105vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  /* 主覆盖层 */
+  .overlay {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    padding-top: clamp(40px, 8vh, 80px);
+  }
+
+  /* 透明卡片 */
+  .glass-card {
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    border-radius: 0;
+    padding: clamp(18px, 3vw, 28px) clamp(20px, 4vw, 40px);
+    text-align: center;
+    animation: cardAppear 2.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    box-shadow: none;
+    position: relative;
+    overflow: visible;
+  }
+
+  .glass-card::before {
+    display: none;
+  }
+
+  @keyframes cardAppear {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .title-row {
+    position: relative;
+    z-index: 1;
+  }
+
+  .title {
+    font-size: clamp(44px, 8vw, 76px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #b388ff, #ff6b6b);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 4s ease infinite;
+    letter-spacing: 0.12em;
+    filter: drop-shadow(0 0 25px rgba(255, 107, 107, 0.5));
+    line-height: 1.3;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    25% { background-position: 100% 0%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+  }
+
+  .title-glow {
+    position: absolute;
+    inset: -20px;
+    background: radial-gradient(ellipse at center, rgba(255,107,107,0.2) 0%, transparent 70%);
+    filter: blur(20px);
+    z-index: -1;
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.5; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  .subtitle {
+    font-size: clamp(16px, 3vw, 24px);
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 10px;
+    letter-spacing: 0.2em;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+  }
+
+  .blessing {
+    font-size: clamp(13px, 2.5vw, 18px);
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 16px;
+    letter-spacing: 0.1em;
+    font-weight: 300;
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+  }
+
+  .divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    margin: 14px auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .emoji-row {
+    font-size: clamp(26px, 4.5vw, 40px);
+    margin-top: 10px;
+    letter-spacing: 0.25em;
+    position: relative;
+    z-index: 1;
+  }
+
+  .emoji-row span {
+    display: inline-block;
+    animation: emojiBounce 2s ease-in-out infinite;
+  }
+  .emoji-row span:nth-child(1) { animation-delay: 0s; }
+  .emoji-row span:nth-child(2) { animation-delay: 0.2s; }
+  .emoji-row span:nth-child(3) { animation-delay: 0.4s; }
+  .emoji-row span:nth-child(4) { animation-delay: 0.6s; }
+  .emoji-row span:nth-child(5) { animation-delay: 0.8s; }
+
+  @keyframes emojiBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* 底部提示 */
+  .hint {
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    animation: hintPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes hintPulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.75; }
+  }
+
+  /* 音乐按钮 */
+  .music-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100;
+    pointer-events: auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .music-btn:hover {
+    border-color: rgba(255,255,255,0.6);
+    transform: scale(1.05);
+  }
+  .music-btn:active { transform: scale(0.88); }
+  .music-btn.playing {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 25px rgba(255,107,107,0.35), 0 4px 15px rgba(0,0,0,0.3);
+    background: rgba(255,107,107,0.1);
+  }
+  .music-btn.muted {
+    border-color: rgba(255,255,255,0.2);
+    opacity: 0.6;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="css-particles" id="cssParticles"></div>
+
+<div class="overlay">
+  <div class="glass-card">
+    <div class="title-row">
+      <div class="title-glow"></div>
+      <div class="title">生 日 快 乐</div>
+    </div>
+    <div class="subtitle">✨ 姐姐 · Happy Birthday ✨</div>
+    <div class="divider"></div>
+    <div class="blessing">
+      愿你眼里有光，心中有爱<br>
+      目光所至，皆是星辰大海
+    </div>
+    <div class="emoji-row">
+      <span>🎂</span> <span>🎉</span> <span>🎈</span> <span>🎁</span> <span>🎊</span>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="hint">💫 点击屏幕绽放烟花 💫</div>
+
+<button class="music-btn playing" id="musicBtn" title="音乐">🎵</button>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ==================== CSS 粒子 ====================
+const cssParticlesContainer = document.getElementById('cssParticles');
+const particleColors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#b388ff', '#ff69b4', '#00e5ff', '#ffab40'];
+for (let i = 0; i < 35; i++) {
+  const p = document.createElement('div');
+  p.className = 'css-particle';
+  const size = 2 + Math.random() * 5;
+  p.style.width = size + 'px';
+  p.style.height = size + 'px';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.background = particleColors[Math.floor(Math.random() * particleColors.length)];
+  p.style.animationDuration = 6 + Math.random() * 14 + 's';
+  p.style.animationDelay = Math.random() * 10 + 's';
+  p.style.boxShadow = `0 0 ${size * 3}px ${p.style.background}`;
+  cssParticlesContainer.appendChild(p);
+}
+
+// ==================== 音乐系统 ====================
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let isPlaying = false;
+let musicInterval = null;
+const musicBtn = document.getElementById('musicBtn');
+
+function createNote(freq, startTime, duration, type = 'sine', gain = 0.07) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, startTime);
+  g.gain.setValueAtTime(0, startTime);
+  g.gain.linearRampToValueAtTime(gain, startTime + 0.04);
+  g.gain.setValueAtTime(gain, startTime + duration * 0.7);
+  g.gain.linearRampToValueAtTime(0, startTime + duration);
+  osc.connect(g);
+  g.connect(audioCtx.destination);
+  osc.start(startTime);
+  osc.stop(startTime + duration + 0.1);
+}
+
+const melody = [262, 262, 294, 262, 349, 330, 262, 262, 294, 262, 392, 349, 262, 262, 523, 440, 349, 330, 294, 466, 466, 440, 349, 392, 349];
+const durations = [0.35, 0.15, 0.5, 0.5, 0.5, 1.0, 0.35, 0.15, 0.5, 0.5, 0.5, 1.0, 0.35, 0.15, 0.5, 0.5, 0.5, 0.5, 0.5, 0.35, 0.15, 0.5, 0.5, 0.5, 1.0];
+
+const harmony = [
+  null, null, null, null, null, null,
+  null, null, null, null, null, null,
+  null, null, 262, 220, 175, 165, 147,
+  null, null, 220, 175, 196, 175
+];
+
+function playMelody() {
+  if (!audioCtx || !isPlaying) return;
+  let time = audioCtx.currentTime + 0.05;
+  for (let i = 0; i < melody.length; i++) {
+    createNote(melody[i], time, durations[i] * 0.88, 'triangle', 0.06);
+    if (harmony[i]) {
+      createNote(harmony[i], time, durations[i] * 0.88, 'sine', 0.025);
+    }
+    time += durations[i];
+  }
+}
+
+function startMusic() {
+  if (!audioCtx) audioCtx = new AudioContext();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  isPlaying = true;
+  musicBtn.classList.add('playing');
+  musicBtn.classList.remove('muted');
+  musicBtn.textContent = '🎵';
+  playMelody();
+  musicInterval = setInterval(playMelody, 13000);
+}
+
+function stopMusic() {
+  isPlaying = false;
+  musicBtn.classList.remove('playing');
+  musicBtn.classList.add('muted');
+  musicBtn.textContent = '🔇';
+  if (musicInterval) { clearInterval(musicInterval); musicInterval = null; }
+}
+
+musicBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  isPlaying ? stopMusic() : startMusic();
+});
+
+// ==================== Three.js 场景 ====================
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0a0018, 0.00006);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 2.5, 16);
+camera.lookAt(0, 0.5, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.3;
+document.body.appendChild(renderer.domElement);
+
+// ==================== 灯光 ====================
+const ambientLight = new THREE.AmbientLight(0x2a1030, 2);
+scene.add(ambientLight);
+
+const mainLight = new THREE.DirectionalLight(0xffeedd, 5);
+mainLight.position.set(8, 12, 5);
+mainLight.castShadow = true;
+mainLight.shadow.mapSize.width = 1024;
+mainLight.shadow.mapSize.height = 1024;
+mainLight.shadow.camera.near = 0.5;
+mainLight.shadow.camera.far = 60;
+mainLight.shadow.bias = -0.0001;
+mainLight.shadow.normalBias = 0.02;
+scene.add(mainLight);
+
+const fillLight = new THREE.DirectionalLight(0x8899ff, 1.5);
+fillLight.position.set(-3, 2, -3);
+scene.add(fillLight);
+
+const pointLight1 = new THREE.PointLight(0xff6b6b, 60, 15, 0.5);
+pointLight1.position.set(0, 3.5, 0);
+scene.add(pointLight1);
+
+const pointLight2 = new THREE.PointLight(0xffd93d, 40, 12, 0.5);
+pointLight2.position.set(4, 2, 5);
+scene.add(pointLight2);
+
+const pointLight3 = new THREE.PointLight(0x6bcb77, 35, 12, 0.5);
+pointLight3.position.set(-4, 2, -5);
+scene.add(pointLight3);
+
+const pointLight4 = new THREE.PointLight(0xb388ff, 30, 10, 0.5);
+pointLight4.position.set(0, -1, 4);
+scene.add(pointLight4);
+
+// ==================== 星空背景 ====================
+const starsGeo = new THREE.BufferGeometry();
+const starsCount = 2500;
+const starsPos = new Float32Array(starsCount * 3);
+const starsCol = new Float32Array(starsCount * 3);
+const starsSizes = new Float32Array(starsCount);
+
+for (let i = 0; i < starsCount; i++) {
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  const r = 35 + Math.random() * 45;
+  starsPos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+  starsPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+  starsPos[i * 3 + 2] = r * Math.cos(phi);
+
+  const c = Math.random();
+  if (c < 0.25) { starsCol[i*3]=1; starsCol[i*3+1]=0.82; starsCol[i*3+2]=0.45; }
+  else if (c < 0.45) { starsCol[i*3]=0.45; starsCol[i*3+1]=0.65; starsCol[i*3+2]=1; }
+  else if (c < 0.6) { starsCol[i*3]=1; starsCol[i*3+1]=0.5; starsCol[i*3+2]=0.7; }
+  else if (c < 0.72) { starsCol[i*3]=0.7; starsCol[i*3+1]=1; starsCol[i*3+2]=0.8; }
+  else { starsCol[i*3]=0.85; starsCol[i*3+1]=0.85; starsCol[i*3+2]=1; }
+  starsSizes[i] = Math.random() * 3 + 0.3;
+}
+
+starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
+starsGeo.setAttribute('color', new THREE.BufferAttribute(starsCol, 3));
+starsGeo.setAttribute('size', new THREE.BufferAttribute(starsSizes, 1));
+
+const starsMat = new THREE.PointsMaterial({
+  size: 0.07, vertexColors: true, blending: THREE.AdditiveBlending,
+  depthWrite: false, transparent: true, opacity: 0.9,
+});
+const stars = new THREE.Points(starsGeo, starsMat);
+scene.add(stars);
+
+// ==================== 流星系统 ====================
+const shootingStars = [];
+const MAX_SHOOTERS = 4;
+
+function createShootingStar() {
+  const geo = new THREE.BufferGeometry();
+  const len = 0.8 + Math.random() * 1.5;
+  const pts = new Float32Array([0, 0, 0, -len, -len * 0.1, 0]);
+  geo.setAttribute('position', new THREE.BufferAttribute(pts, 3));
+  const mat = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.9,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    linewidth: 1,
+  });
+  const line = new THREE.Line(geo, mat);
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.random() * Math.PI * 0.4 + 0.3;
+  const dist = 20 + Math.random() * 15;
+  line.position.set(
+    dist * Math.sin(phi) * Math.cos(theta),
+    dist * Math.cos(phi) + 3,
+    dist * Math.sin(phi) * Math.sin(theta)
+  );
+  line.rotation.z = Math.random() * 0.5 + 0.3;
+  line.rotation.y = Math.random() * Math.PI * 2;
+  line.userData = {
+    velocity: new THREE.Vector3(
+      (Math.random() - 0.5) * 0.08,
+      -0.04 - Math.random() * 0.08,
+      (Math.random() - 0.5) * 0.08
+    ),
+    life: 1.5 + Math.random() * 2.5,
+    age: 0,
+  };
+  scene.add(line);
+  shootingStars.push(line);
+  if (shootingStars.length > MAX_SHOOTERS) {
+    const old = shootingStars.shift();
+    scene.remove(old);
+    old.geometry.dispose();
+    old.material.dispose();
+  }
+}
+
+// ==================== 粒子螺旋银河 ====================
+const spiralCount = 800;
+const spiralGeo = new THREE.BufferGeometry();
+const spiralPos = new Float32Array(spiralCount * 3);
+const spiralCol = new Float32Array(spiralCount * 3);
+
+for (let i = 0; i < spiralCount; i++) {
+  const t = i / spiralCount;
+  const angle = t * Math.PI * 10;
+  const radius = 2.5 + t * 7;
+  const y = (t - 0.5) * 14;
+  spiralPos[i*3] = Math.cos(angle) * radius;
+  spiralPos[i*3+1] = y;
+  spiralPos[i*3+2] = Math.sin(angle) * radius;
+  const color = new THREE.Color();
+  color.setHSL((t * 0.7 + 0.6) % 1, 0.9, 0.55 + t * 0.2);
+  spiralCol[i*3] = color.r; spiralCol[i*3+1] = color.g; spiralCol[i*3+2] = color.b;
+}
+
+spiralGeo.setAttribute('position', new THREE.BufferAttribute(spiralPos, 3));
+spiralGeo.setAttribute('color', new THREE.BufferAttribute(spiralCol, 3));
+const spiralMat = new THREE.PointsMaterial({
+  size: 0.05, vertexColors: true, blending: THREE.AdditiveBlending,
+  depthWrite: false, transparent: true, opacity: 0.65,
+});
+const spiral = new THREE.Points(spiralGeo, spiralMat);
+spiral.position.y = -1.5;
+scene.add(spiral);
+
+// ==================== 3D 爱心粒子 ====================
+const heartCount = 500;
+const heartGeo = new THREE.BufferGeometry();
+const heartPos = new Float32Array(heartCount * 3);
+const heartCol = new Float32Array(heartCount * 3);
+
+for (let i = 0; i < heartCount; i++) {
+  const t = (i / heartCount) * Math.PI * 2;
+  const scale = 2.2;
+  const x = scale * 16 * Math.pow(Math.sin(t), 3);
+  const y = scale * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+  const z = (Math.random() - 0.5) * 2;
+  heartPos[i*3] = x * 0.28;
+  heartPos[i*3+1] = y * 0.28 + 5.5;
+  heartPos[i*3+2] = z;
+  const color = new THREE.Color();
+  color.setHSL(0.93 + Math.random() * 0.07, 1, 0.45 + Math.random() * 0.5);
+  heartCol[i*3] = color.r; heartCol[i*3+1] = color.g; heartCol[i*3+2] = color.b;
+}
+
+heartGeo.setAttribute('position', new THREE.BufferAttribute(heartPos, 3));
+heartGeo.setAttribute('color', new THREE.BufferAttribute(heartCol, 3));
+const heartMat = new THREE.PointsMaterial({
+  size: 0.07, vertexColors: true, blending: THREE.AdditiveBlending,
+  depthWrite: false, transparent: true, opacity: 0.8,
+});
+const heart = new THREE.Points(heartGeo, heartMat);
+scene.add(heart);
+
+// ==================== 光环轨道 ====================
+const ringGeo = new THREE.TorusGeometry(2.2, 0.02, 32, 120);
+const ringMat = new THREE.MeshBasicMaterial({
+  color: 0xffd93d, transparent: true, opacity: 0.5,
+  blending: THREE.AdditiveBlending, depthWrite: false,
+});
+const ring = new THREE.Mesh(ringGeo, ringMat);
+ring.rotation.x = Math.PI / 2.5;
+ring.position.y = 0.5;
+scene.add(ring);
+
+const ring2Geo = new THREE.TorusGeometry(2.6, 0.015, 32, 100);
+const ring2Mat = new THREE.MeshBasicMaterial({
+  color: 0xff6b6b, transparent: true, opacity: 0.4,
+  blending: THREE.AdditiveBlending, depthWrite: false,
+});
+const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+ring2.rotation.x = -Math.PI / 3;
+ring2.position.y = 0.5;
+scene.add(ring2);
+
+// 光环粒子
+const orbitCount = 200;
+const orbitGeo = new THREE.BufferGeometry();
+const orbitPos = new Float32Array(orbitCount * 3);
+const orbitCol = new Float32Array(orbitCount * 3);
+for (let i = 0; i < orbitCount; i++) {
+  const angle = (i / orbitCount) * Math.PI * 2;
+  const r = 2.2 + Math.random() * 0.1;
+  orbitPos[i*3] = Math.cos(angle) * r;
+  orbitPos[i*3+1] = (Math.random() - 0.5) * 0.3;
+  orbitPos[i*3+2] = Math.sin(angle) * r;
+  const color = new THREE.Color().setHSL(0.15 + i / orbitCount * 0.3, 1, 0.6);
+  orbitCol[i*3] = color.r; orbitCol[i*3+1] = color.g; orbitCol[i*3+2] = color.b;
+}
+orbitGeo.setAttribute('position', new THREE.BufferAttribute(orbitPos, 3));
+orbitGeo.setAttribute('color', new THREE.BufferAttribute(orbitCol, 3));
+const orbitMat = new THREE.PointsMaterial({
+  size: 0.04, vertexColors: true, blending: THREE.AdditiveBlending,
+  depthWrite: false, transparent: true, opacity: 0.8,
+});
+const orbitRing = new THREE.Points(orbitGeo, orbitMat);
+orbitRing.position.y = 0.5;
+scene.add(orbitRing);
+
+// ==================== 蛋糕 ====================
+const cakeGroup = new THREE.Group();
+
+// 底层
+const layer1Geo = new THREE.CylinderGeometry(1.5, 1.6, 0.8, 48);
+const layer1Mat = new THREE.MeshStandardMaterial({ color: 0xffccdd, roughness: 0.25, metalness: 0.05 });
+const layer1 = new THREE.Mesh(layer1Geo, layer1Mat);
+layer1.position.y = -0.4; layer1.castShadow = true; layer1.receiveShadow = true;
+cakeGroup.add(layer1);
+
+// 奶油1
+const cream1Geo = new THREE.TorusGeometry(1.55, 0.09, 16, 48);
+const cream1 = new THREE.Mesh(cream1Geo, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.15, metalness: 0.05 }));
+cream1.rotation.x = Math.PI / 2; cream1.position.y = 0.05;
+cakeGroup.add(cream1);
+
+// 中层
+const layer2Geo = new THREE.CylinderGeometry(1.1, 1.2, 0.7, 48);
+const layer2 = new THREE.Mesh(layer2Geo, new THREE.MeshStandardMaterial({ color: 0xffe4b5, roughness: 0.25, metalness: 0.05 }));
+layer2.position.y = 0.4; layer2.castShadow = true; layer2.receiveShadow = true;
+cakeGroup.add(layer2);
+
+// 奶油2
+const cream2 = new THREE.Mesh(
+  new THREE.TorusGeometry(1.15, 0.07, 16, 48),
+  new THREE.MeshStandardMaterial({ color: 0xffb6c1, roughness: 0.15, metalness: 0.05 })
+);
+cream2.rotation.x = Math.PI / 2; cream2.position.y = 0.8;
+cakeGroup.add(cream2);
+
+// 顶层
+const layer3Geo = new THREE.CylinderGeometry(0.7, 0.8, 0.6, 48);
+const layer3 = new THREE.Mesh(layer3Geo, new THREE.MeshStandardMaterial({ color: 0xffeef5, roughness: 0.25, metalness: 0.05 }));
+layer3.position.y = 1.1; layer3.castShadow = true; layer3.receiveShadow = true;
+cakeGroup.add(layer3);
+
+// 奶油3
+const cream3 = new THREE.Mesh(
+  new THREE.TorusGeometry(0.75, 0.06, 16, 48),
+  new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.15, metalness: 0.05 })
+);
+cream3.rotation.x = Math.PI / 2; cream3.position.y = 1.45;
+cakeGroup.add(cream3);
+
+// 樱桃
+const cherryGeo = new THREE.SphereGeometry(0.13, 24, 24);
+const cherryMat = new THREE.MeshStandardMaterial({ color: 0xff2244, roughness: 0.2, metalness: 0.1 });
+const cherry = new THREE.Mesh(cherryGeo, cherryMat);
+cherry.position.y = 1.7; cherry.castShadow = true;
+cakeGroup.add(cherry);
+
+// 樱桃梗
+const stemGeo = new THREE.CylinderGeometry(0.015, 0.015, 0.2, 8);
+const stem = new THREE.Mesh(stemGeo, new THREE.MeshStandardMaterial({ color: 0x336633, roughness: 0.6 }));
+stem.position.y = 1.85; stem.rotation.z = 0.3;
+cakeGroup.add(stem);
+
+// 樱桃高光
+const highlightGeo = new THREE.SphereGeometry(0.04, 8, 8);
+const highlight = new THREE.Mesh(highlightGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+highlight.position.set(0.04, 1.74, 0.1);
+cakeGroup.add(highlight);
+
+// 蜡烛
+const candles = [];
+const candleColors = [0xff4444, 0xff8844, 0xffcc44, 0x44ccff, 0xff66aa];
+for (let i = 0; i < 5; i++) {
+  const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+  const r = 0.42;
+  const candleGeo = new THREE.CylinderGeometry(0.05, 0.055, 0.5, 20);
+  const candle = new THREE.Mesh(candleGeo, new THREE.MeshStandardMaterial({
+    color: candleColors[i], roughness: 0.35, emissive: candleColors[i], emissiveIntensity: 0.25,
+  }));
+  candle.position.set(Math.cos(angle) * r, 1.5, Math.sin(angle) * r);
+  candle.castShadow = true;
+  cakeGroup.add(candle);
+
+  const flameGeo = new THREE.SphereGeometry(0.06, 10, 10);
+  const flame = new THREE.Mesh(flameGeo, new THREE.MeshBasicMaterial({ color: 0xffaa00 }));
+  flame.position.y = 0.3; flame.scale.set(1, 1.6, 1);
+  candle.add(flame);
+
+  const glowGeo = new THREE.SphereGeometry(0.11, 8, 8);
+  const glow = new THREE.Mesh(glowGeo, new THREE.MeshBasicMaterial({
+    color: 0xff6600, transparent: true, opacity: 0.35,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  }));
+  flame.add(glow);
+
+  candles.push({ candle, flame, glow, baseY: flame.position.y, angle, radius: r });
+}
+
+// 蛋糕装饰球
+for (let i = 0; i < 16; i++) {
+  const angle = (i / 16) * Math.PI * 2;
+  const r = 1.58;
+  const ball = new THREE.Mesh(
+    new THREE.SphereGeometry(0.04, 8, 8),
+    new THREE.MeshStandardMaterial({
+      color: new THREE.Color().setHSL(i / 16, 0.85, 0.7),
+      roughness: 0.2, emissive: new THREE.Color().setHSL(i / 16, 0.85, 0.5), emissiveIntensity: 0.5,
+    })
+  );
+  ball.position.set(Math.cos(angle) * r, 0.05, Math.sin(angle) * r);
+  cakeGroup.add(ball);
+}
+
+// 糖粒
+for (let i = 0; i < 40; i++) {
+  const angle = Math.random() * Math.PI * 2;
+  const r = 0.2 + Math.random() * 1.3;
+  const y = -0.4 + Math.random() * 1.8;
+  const sprinkle = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.015, 0.015, 0.08, 6),
+    new THREE.MeshStandardMaterial({
+      color: new THREE.Color().setHSL(Math.random(), 0.9, 0.65),
+      roughness: 0.3, emissiveIntensity: 0.2,
+    })
+  );
+  sprinkle.position.set(Math.cos(angle) * r, y, Math.sin(angle) * r);
+  sprinkle.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+  cakeGroup.add(sprinkle);
+}
+
+cakeGroup.position.y = -3;
+scene.add(cakeGroup);
+
+// ==================== 3D 礼盒 ====================
+const giftBoxes = [];
+const giftColors = [0xff6b6b, 0xffd93d, 0x6bcb77, 0x4d96ff, 0xb388ff, 0xff69b4];
+
+for (let i = 0; i < 6; i++) {
+  const boxGroup = new THREE.Group();
+  const size = 0.2 + Math.random() * 0.25;
+
+  const boxGeo = new THREE.BoxGeometry(size, size, size);
+  const boxMat = new THREE.MeshStandardMaterial({
+    color: giftColors[i], roughness: 0.3, metalness: 0.15,
+  });
+  const box = new THREE.Mesh(boxGeo, boxMat);
+  box.castShadow = true; box.receiveShadow = true;
+  boxGroup.add(box);
+
+  const ribbonGeo = new THREE.BoxGeometry(size * 0.2, size, size * 0.2);
+  const ribbon = new THREE.Mesh(ribbonGeo, new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.2, metalness: 0.3,
+  }));
+  boxGroup.add(ribbon);
+
+  const ribbonHGeo = new THREE.BoxGeometry(size, size * 0.2, size * 0.2);
+  const ribbonH = new THREE.Mesh(ribbonHGeo, new THREE.MeshStandardMaterial({
+    color: 0xffffff, roughness: 0.2, metalness: 0.3,
+  }));
+  boxGroup.add(ribbonH);
+
+  const bowGeo = new THREE.SphereGeometry(size * 0.25, 8, 8);
+  const bow = new THREE.Mesh(bowGeo, new THREE.MeshStandardMaterial({
+    color: 0xffd700, roughness: 0.2, metalness: 0.4, emissive: 0xffd700, emissiveIntensity: 0.2,
+  }));
+  bow.position.y = size / 2 + size * 0.12;
+  boxGroup.add(bow);
+
+  const angle = (i / 6) * Math.PI * 2;
+  const dist = 3 + Math.random() * 1.5;
+  boxGroup.position.set(Math.cos(angle) * dist, -3.5 + Math.random() * 0.5, Math.sin(angle) * dist);
+  boxGroup.rotation.y = Math.random() * Math.PI * 2;
+  boxGroup.userData = {
+    floatOffset: Math.random() * Math.PI * 2,
+    floatSpeed: 0.5 + Math.random() * 0.8,
+    rotSpeed: 0.2 + Math.random() * 0.5,
+    baseY: boxGroup.position.y,
+  };
+  scene.add(boxGroup);
+  giftBoxes.push(boxGroup);
+}
+
+// ==================== 地面光晕 ====================
+const groundGlowGeo = new THREE.PlaneGeometry(10, 10);
+const groundGlowMat = new THREE.ShaderMaterial({
+  uniforms: { uTime: { value: 0 } },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
+  `,
+  fragmentShader: `
+    varying vec2 vUv;
+    uniform float uTime;
+    void main() {
+      float d = length(vUv - 0.5) * 2.0;
+      float alpha = smoothstep(1.0, 0.0, d) * 0.25;
+      float hue = fract(uTime * 0.03 + d * 0.4);
+      vec3 color = 0.5 + 0.5 * cos(6.28318 * (hue + vec3(0.0, 0.33, 0.67)));
+      gl_FragColor = vec4(color, alpha);
+    }
+  `,
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+});
+const groundGlow = new THREE.Mesh(groundGlowGeo, groundGlowMat);
+groundGlow.rotation.x = -Math.PI / 2;
+groundGlow.position.y = -4.5;
+scene.add(groundGlow);
+
+// ==================== 烟花系统 ====================
+const fireworks = [];
+
+class FireworkParticle {
+  constructor(pos, color, vel) {
+    this.position = pos.clone();
+    this.velocity = vel.clone();
+    this.color = color.clone();
+    this.life = 1.0;
+    this.decay = 0.006 + Math.random() * 0.018;
+  }
+  update() { this.velocity.y += 0.0008; this.position.add(this.velocity); this.life -= this.decay; return this.life > 0; }
+}
+
+class Firework {
+  constructor(x, y, z) {
+    this.particles = [];
+    this.alive = true;
+    const hue = Math.random();
+    const colors = [
+      new THREE.Color().setHSL(hue, 1, 0.5),
+      new THREE.Color().setHSL((hue + 0.1) % 1, 1, 0.55),
+      new THREE.Color().setHSL((hue + 0.2) % 1, 1, 0.5),
+    ];
+    const count = 70 + Math.floor(Math.random() * 100);
+    for (let i = 0; i < count; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.random() * Math.PI;
+      const speed = 0.04 + Math.random() * 0.22;
+      const vel = new THREE.Vector3(
+        Math.sin(phi) * Math.cos(theta) * speed,
+        Math.sin(phi) * Math.sin(theta) * speed,
+        Math.cos(phi) * speed
+      );
+      this.particles.push(new FireworkParticle(
+        new THREE.Vector3(x, y, z),
+        colors[Math.floor(Math.random() * 3)],
+        vel
+      ));
+    }
+  }
+  update() {
+    this.particles = this.particles.filter(p => p.update());
+    if (this.particles.length === 0) this.alive = false;
+  }
+}
+
+function spawnFirework(x, y, z) {
+  fireworks.push(new Firework(x, y, z));
+}
+
+const fwGeo = new THREE.BufferGeometry();
+const fwPosArr = new Float32Array(6000 * 3);
+const fwColArr = new Float32Array(6000 * 3);
+fwGeo.setAttribute('position', new THREE.BufferAttribute(fwPosArr, 3));
+fwGeo.setAttribute('color', new THREE.BufferAttribute(fwColArr, 3));
+const fwMat = new THREE.PointsMaterial({
+  size: 0.07, vertexColors: true, blending: THREE.AdditiveBlending,
+  depthWrite: false, transparent: true, opacity: 0.9,
+});
+const fwPoints = new THREE.Points(fwGeo, fwMat);
+fwPoints.frustumCulled = false;
+scene.add(fwPoints);
+
+// ==================== 飘落花瓣 ====================
+const petalCount = 180;
+const petals = [];
+const petalGeo = new THREE.BufferGeometry();
+const petalPosArr = new Float32Array(petalCount * 3);
+const petalColArr = new Float32Array(petalCount * 3);
+petalGeo.setAttribute('position', new THREE.BufferAttribute(petalPosArr, 3));
+petalGeo.setAttribute('color', new THREE.BufferAttribute(petalColArr, 3));
+
+function createPetalTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 32; canvas.height = 32;
+  const ctx = canvas.getContext('2d');
+  const g = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.25, 'rgba(255,210,210,0.9)');
+  g.addColorStop(0.6, 'rgba(255,140,140,0.4)');
+  g.addColorStop(1, 'rgba(255,80,80,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 32, 32);
+  return new THREE.CanvasTexture(canvas);
+}
+
+const petalMat = new THREE.PointsMaterial({
+  size: 0.18, vertexColors: true, blending: THREE.NormalBlending,
+  depthWrite: true, transparent: true, opacity: 0.8, map: createPetalTexture(),
+});
+const petalPoints = new THREE.Points(petalGeo, petalMat);
+scene.add(petalPoints);
+
+for (let i = 0; i < petalCount; i++) {
+  petals.push({
+    x: (Math.random() - 0.5) * 22,
+    y: 8 + Math.random() * 18,
+    z: (Math.random() - 0.5) * 22,
+    vy: -0.004 - Math.random() * 0.022,
+    vx: (Math.random() - 0.5) * 0.012,
+    vz: (Math.random() - 0.5) * 0.012,
+    hue: Math.random() < 0.65 ? 0.93 + Math.random() * 0.07 : Math.random(),
+  });
+}
+
+// ==================== 点击交互 ====================
+let fireworkMode = false;
+let fireworkInterval = null;
+const hintEl = document.querySelector('.hint');
+
+function spawnBurstFireworks(x, y, z) {
+  const count = 5 + Math.floor(Math.random() * 5);
+  for (let i = 0; i < count; i++) {
+    const ox = x + (Math.random() - 0.5) * 3;
+    const oy = y + (Math.random() - 0.5) * 2;
+    const oz = z + (Math.random() - 0.5) * 3;
+    spawnFirework(ox, oy, oz);
+  }
+}
+
+function spawnScreenFirework() {
+  const x = (Math.random() - 0.5) * 10;
+  const y = -1 + Math.random() * 8;
+  const z = (Math.random() - 0.5) * 6;
+  spawnFirework(x, y, z);
+}
+
+function startFireworkMode() {
+  fireworkMode = true;
+  hintEl.textContent = '🔥 烟花绽放中 · 点击屏幕停止 🔥';
+
+  function burst() {
+    if (!fireworkMode) return;
+    const x = (Math.random() - 0.5) * 10;
+    const y = -1 + Math.random() * 8;
+    const z = (Math.random() - 0.5) * 6;
+    spawnBurstFireworks(x, y, z);
+    fireworkInterval = setTimeout(burst, 400 + Math.random() * 500);
+  }
+  burst();
+}
+
+function stopFireworkMode() {
+  fireworkMode = false;
+  hintEl.textContent = '💫 点击屏幕绽放烟花 💫';
+  if (fireworkInterval) {
+    clearTimeout(fireworkInterval);
+    fireworkInterval = null;
+  }
+}
+
+function onInteract(e) {
+  if (e.target === musicBtn) return;
+  if (!audioCtx || audioCtx.state === 'suspended') startMusic();
+
+  if (fireworkMode) {
+    stopFireworkMode();
+  } else {
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    const x = (cx / window.innerWidth - 0.5) * 10;
+    const y = -(cy / window.innerHeight - 0.5) * 8;
+    spawnBurstFireworks(x, y, 0);
+    startFireworkMode();
+  }
+}
+
+window.addEventListener('click', onInteract);
+window.addEventListener('touchstart', onInteract, { passive: true });
+
+// ==================== 动画循环 ====================
+const clock = new THREE.Clock();
+let shootStarTimer = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const time = clock.getElapsedTime();
+  const dt = Math.min(clock.getDelta(), 0.1);
+
+  stars.rotation.y += 0.00008;
+  stars.rotation.x += 0.00004;
+
+  spiral.rotation.y += 0.003;
+  spiral.rotation.x = Math.sin(time * 0.18) * 0.12;
+
+  heart.rotation.y += 0.004;
+  heart.rotation.z = Math.sin(time * 0.45) * 0.08;
+  heart.scale.setScalar(1 + Math.sin(time * 1.4) * 0.04);
+
+  ring.rotation.z += 0.003;
+  ring2.rotation.z -= 0.004;
+  orbitRing.rotation.y += 0.006;
+  ring.material.opacity = 0.3 + Math.sin(time * 1.5) * 0.2;
+  ring2.material.opacity = 0.25 + Math.cos(time * 1.8) * 0.15;
+
+  cakeGroup.rotation.y += 0.004;
+  cakeGroup.position.y = -3 + Math.sin(time * 0.75) * 0.25;
+
+  giftBoxes.forEach(gb => {
+    gb.rotation.y += gb.userData.rotSpeed * 0.01;
+    gb.position.y = gb.userData.baseY + Math.sin(time * gb.userData.floatSpeed + gb.userData.floatOffset) * 0.3;
+  });
+
+  candles.forEach((c, i) => {
+    c.flame.position.y = c.baseY + Math.sin(time * 9 + i * 1.5) * 0.035;
+    c.flame.scale.set(
+      1 + Math.sin(time * 11 + i) * 0.25,
+      1.6 + Math.sin(time * 9 + i) * 0.35,
+      1 + Math.cos(time * 11 + i) * 0.25
+    );
+    c.glow.scale.setScalar(1 + Math.sin(time * 7 + i) * 0.35);
+  });
+
+  pointLight1.intensity = 45 + Math.sin(time * 2.2) * 20;
+  pointLight2.intensity = 30 + Math.cos(time * 2.7) * 12;
+  pointLight3.intensity = 28 + Math.sin(time * 2.5 + 1) * 12;
+  pointLight4.intensity = 25 + Math.cos(time * 1.9 + 2) * 10;
+
+  // 流星
+  shootStarTimer += dt;
+  if (shootStarTimer > 3 + Math.random() * 4) {
+    shootStarTimer = 0;
+    createShootingStar();
+  }
+  for (let i = shootingStars.length - 1; i >= 0; i--) {
+    const ss = shootingStars[i];
+    ss.userData.age += dt;
+    ss.position.add(ss.userData.velocity);
+    ss.material.opacity = Math.max(0, 1 - ss.userData.age / ss.userData.life);
+    if (ss.userData.age > ss.userData.life) {
+      scene.remove(ss); ss.geometry.dispose(); ss.material.dispose();
+      shootingStars.splice(i, 1);
+    }
+  }
+
+  // 烟花
+  fireworks.forEach(fw => fw.update());
+  for (let i = fireworks.length - 1; i >= 0; i--) {
+    if (!fireworks[i].alive) fireworks.splice(i, 1);
+  }
+
+  let fpIdx = 0;
+  for (const fw of fireworks) {
+    for (const p of fw.particles) {
+      if (fpIdx >= 6000) break;
+      fwPosArr[fpIdx*3] = p.position.x; fwPosArr[fpIdx*3+1] = p.position.y; fwPosArr[fpIdx*3+2] = p.position.z;
+      fwColArr[fpIdx*3] = p.color.r * p.life; fwColArr[fpIdx*3+1] = p.color.g * p.life; fwColArr[fpIdx*3+2] = p.color.b * p.life;
+      fpIdx++;
+    }
+  }
+  for (let i = fpIdx; i < 6000; i++) {
+    fwPosArr[i*3]=0; fwPosArr[i*3+1]=-999; fwPosArr[i*3+2]=0;
+    fwColArr[i*3]=0; fwColArr[i*3+1]=0; fwColArr[i*3+2]=0;
+  }
+  fwGeo.attributes.position.needsUpdate = true;
+  fwGeo.attributes.color.needsUpdate = true;
+
+  // 花瓣
+  for (let i = 0; i < petals.length; i++) {
+    const p = petals[i];
+    p.y += p.vy; p.x += p.vx + Math.sin(time*0.5+i)*0.003; p.z += p.vz + Math.cos(time*0.5+i)*0.003;
+    if (p.y < -8) { p.y=8+Math.random()*6; p.x=(Math.random()-0.5)*22; p.z=(Math.random()-0.5)*22; }
+    petalPosArr[i*3]=p.x; petalPosArr[i*3+1]=p.y; petalPosArr[i*3+2]=p.z;
+    const c = new THREE.Color().setHSL(p.hue, 0.8, 0.6);
+    petalColArr[i*3]=c.r; petalColArr[i*3+1]=c.g; petalColArr[i*3+2]=c.b;
+  }
+  petalGeo.attributes.position.needsUpdate = true;
+  petalGeo.attributes.color.needsUpdate = true;
+
+  groundGlowMat.uniforms.uTime.value = time;
+
+  camera.position.x = Math.sin(time * 0.18) * 1.8;
+  camera.position.y = 2.5 + Math.sin(time * 0.28) * 0.6;
+  camera.lookAt(0, 0.6, 0);
+
+  renderer.render(scene, camera);
+}
+
+// ==================== 响应式 ====================
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ==================== 启动 ====================
+animate();
+
+console.log('🎂 姐姐，生日快乐！愿你每一天都闪闪发光！✨');
+console.log('💫 点击屏幕开始烟花盛宴，再次点击停止~');
+</script>
+</body>
+</html>
